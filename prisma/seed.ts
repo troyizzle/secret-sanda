@@ -1,7 +1,7 @@
 import { prisma } from "../src/server/db/client";
 
 async function main() {
-  await prisma.availablePeople.createMany({
+  await prisma.people.createMany({
     data: [
       { name: "Sandy" },
       { name: "Santy" },

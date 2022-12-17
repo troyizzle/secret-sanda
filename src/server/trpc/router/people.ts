@@ -1,27 +1,39 @@
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 
 export const peopleRouter = router({
+  getNames: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.people.findMany({
+      where: {
+        chosenName: null
+      }
+    })
+  }),
+  getAll: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.people.findMany()
+  }),
   assignPerson: publicProcedure.input(
     z.object({
-      name: z.string(),
+      id: z.string(),
     })
   ).mutation( async (input) => {
     const { ctx, input: data } = input
-    const availablePeople = await ctx.prisma.availablePeople.findFirst();
-    if (availablePeople === null) {
-      throw Error("no more people")
-    }
-    await ctx.prisma.availablePeople.delete({
-      where: {
-        id: availablePeople.id
-      }
-    })
 
-    return ctx.prisma.people.create({
+    const availableName = await ctx.prisma.$queryRaw<{ name: string }[] | null>(
+        Prisma.sql`SELECT "People".name FROM "People" LEFT JOIN "People" available_people ON "People"."name" = available_people."chosenName" WHERE available_people.id IS NULL AND "People"."id" != ${data.id} LIMIT 1`
+      )
+
+    if (availableName == null) {
+      throw Error("No mas genti")
+    }
+
+    return ctx.prisma.people.update({
+      where: {
+        id: data.id,
+      },
       data: {
-        name: data.name,
-        chosenPerson: availablePeople.name
+        chosenName: availableName[0].name
       }
     })
   })
