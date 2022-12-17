@@ -28,6 +28,10 @@ export const peopleRouter = router({
       throw Error("No mas genti")
     }
 
+    if (availableName[0] == undefined) {
+      throw Error("No mas genti")
+    }
+
     return ctx.prisma.people.update({
       where: {
         id: data.id,
