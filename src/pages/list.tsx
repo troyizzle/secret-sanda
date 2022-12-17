@@ -10,7 +10,7 @@ export default function List() {
   return (
     <div className="mx-4 my-6 text-center">
       {people.data.map((person) => (
-        <div>
+        <div key={person.id}>
           {person.name} tiene {person.chosenName ?? "Nadie"}
         </div>
       ))}

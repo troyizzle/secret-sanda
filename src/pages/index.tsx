@@ -40,7 +40,7 @@ const Home: NextPage = () => {
                 >
                   <option value="">Elige tu nombre</option>
                   {people?.data?.map((person) => (
-                    <option value={person.id}>{person.name}</option>
+                    <option key={person.id} value={person.id}>{person.name}</option>
                   ))}
                 </select>
                 <button
