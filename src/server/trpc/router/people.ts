@@ -10,6 +10,15 @@ export const peopleRouter = router({
       }
     })
   }),
+  createPerson: publicProcedure.input(
+    z.object({
+      name: z.string()
+    })
+  ).mutation((input) => {
+    const { ctx, input: data } = input
+
+    return ctx.prisma.people.create({ data })
+  }),
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.people.findMany()
   }),
